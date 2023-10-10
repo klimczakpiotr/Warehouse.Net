@@ -1,0 +1,89 @@
+﻿@model Warehouse.Application.ViewModels.Customer.ListCustomerForListVm
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>List of customers</h1>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="AddCustomer">Add Customer</a>
+    </p>
+}
+<form asp-action="Index" asp-controller="Customer" method="post">
+    <div class="row">
+        <input type="text" asp-for="SearchString" name="searchString" id="searchString" style="margin: 1% 0; width: 60%;" />
+        <input type="submit" value="Search" style="margin: 1% 0 1% 1%; width: 30%;" />
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Id
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        NIP
+                    </th>
+@*                     <th>
+                        REGON
+                    </th> *@
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+        @foreach (var item in Model.Customers) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NIP)
+                    </td>
+@*                     <td>
+                        @Html.DisplayFor(modelItem => item.REGON)
+                    </td> *@
+                    <td>
+                        @Html.ActionLink("Edit", "EditCustomer", new { id=item.Id }) |
+                        @Html.ActionLink("Details", "ViewCustomer", new { id=item.Id }) |
+                        @Html.ActionLink("Delete", "DeleteCustomer", new { id=item.Id })
+                    </td>
+                </tr>
+        }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+        {
+            @if (i != Model.CurrentPage)
+            {
+                <span><a href="javascript:PagerClick(@i)">@i</a></span>
+            }
+            else
+            {
+                <span>@i</span>
+            }
+        }
+        <input type="hidden" name="pageNo" id="pageNo"/>
+        <input type="hidden" name="pageSize" id="pageSize" value="5" />
+    </div>
+</form>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        function PagerClick(index)
+        {
+            document.getElementById("pageNo").value = index;
+            document.forms[0].submit();
+        }
+    </script>
+}
